@@ -11,7 +11,15 @@ from .models import Post
 # Create your views here.
 def posts(request):
     posts_list = Post.objects.all()
-    return render(request, 'forum/posts.html', {'posts': posts_list})
+    post_transaction = Post.objects.filter(partition='Transaction').count()
+    post_action = Post.objects.filter(partition='Activity').count()
+    post_announcement = Post.objects.filter(partition='Announcement').count()
+    post_chat = Post.objects.filter(partition='Chat').count()
+    return render(request, 'forum/posts.html', {'posts': posts_list,
+                                                'post_transaction': post_transaction,
+                                                'post_action': post_action,
+                                                'post_announcement': post_announcement,
+                                                'post_chat': post_chat})
 
 
 class PostCreate(View):
@@ -22,8 +30,11 @@ class PostCreate(View):
             title=request.POST.get('newPostTitle'),
             content=request.POST.get('newPostContent'),
         )
+
         return JsonResponse({
-            'postID': post.id})
+            'postID': post.id
+        })
+
 
 def post_detail(request, pid):
     post = Post.objects.get(id=pid)

@@ -10,8 +10,8 @@
       {% for post in posts %}
       <div class="ui items row" style="margin: 0 1.5rem;">
         <div class="item">
-          <div class="content">
-            <a class="header" href="{% url 'forum:post_detail' post.id %}" target="{{ post.id }}">{{ post.title }}</a>
+          <div class="content" onclick="javascript:location.href='{% url 'forum:post_detail' post.id %}'" style="cursor: pointer;">
+            <a class="header">{{ post.title }}</a>
             <div class="meta">
               <span>Description</span>
             </div>
@@ -27,16 +27,16 @@
     <div class="four wide column">
       <div class="ui middle right vertical menu">
         <a class="active item">
-          <div class="ui teal label">1</div>Chat
+          <div class="ui teal label">{{ post_chat }}</div>Chat
         </a>
         <a class="item">
-          <div class="ui label">51</div>Announcement
+          <div class="ui label">{{ post_announcement }}</div>Announcement
         </a>
         <a class="item">
-          <div class="ui label">1</div>Transaction
+          <div class="ui label">{{ post_transaction }}</div>Transaction
         </a>
         <a class="item">
-          <div class="ui label">1</div>Activity
+          <div class="ui label">{{ post_action }}</div>Activity
         </a>
         <a class="item" href="#" id="addNewPostButton">
           <div class="ui label">+</div>Add new
@@ -88,6 +88,21 @@
     <div class="ui button" id="createNewPost">OK</div>
   </div>
 </div>
+<div class="ui modal" id="addPostBlank">
+  <i class="close icon"></i>
+  <div class="header">
+    Tip
+  </div>
+  <div class="image content">
+    <div class="description">
+      Please fill in all fields
+    </div>
+  </div>
+  <div class="actions">
+    <div class="ui button">Cancel</div>
+    <div class="ui button">OK</div>
+  </div>
+</div>
 {% endblock %}
 {% block js %}
   <script type="text/javascript">
@@ -98,7 +113,6 @@
         })
          $('#selectNewPostPartition').dropdown();
     })
-
 
     // csrf for ajax
     function getCookie(name) {
@@ -138,8 +152,8 @@
                 'newPostContent': $('#newPostContent').val(),
             }
             console.log(data);
-            if (data.newPostPartition === '') {
-                console.log('need parttion');
+            if (data.newPostPartition === '' || data.newPostTitle === '' || data.newPostContent === '') {
+                $('#addPostBlank').modal('show');
             } else {
                 $.ajax({
                     url: '{% url 'forum:post_create' %}',
