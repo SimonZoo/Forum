@@ -1,0 +1,159 @@
+{% extends "forum/base.html" %}
+{% block main %}
+
+<div class="ui container" style="margin-top: 2rem;">
+  <div class="ui two column row grid">
+
+    <div class="twelve wide column">
+      <div class="ui divided vertically divided grid">
+      {% if posts %}
+      {% for post in posts %}
+      <div class="ui items row" style="margin: 0 1.5rem;">
+        <div class="item">
+          <div class="content">
+            <a class="header" href="{% url 'forum:post_detail' post.id %}" target="{{ post.id }}">{{ post.title }}</a>
+            <div class="meta">
+              <span>Description</span>
+            </div>
+            <div class="extra">{{ post.partition }} </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      {% endif %}
+      </div>
+    </div>
+
+    <div class="four wide column">
+      <div class="ui middle right vertical menu">
+        <a class="active item">
+          <div class="ui teal label">1</div>Chat
+        </a>
+        <a class="item">
+          <div class="ui label">51</div>Announcement
+        </a>
+        <a class="item">
+          <div class="ui label">1</div>Transaction
+        </a>
+        <a class="item">
+          <div class="ui label">1</div>Activity
+        </a>
+        <a class="item" href="#" id="addNewPostButton">
+          <div class="ui label">+</div>Add new
+        </a>
+      <div class="item">
+        <div class="ui icon input">
+        <input type="text" placeholder="Search post...">
+        <i class="search icon"></i>
+      </div>
+    </div>
+  </div>
+   </div>
+  </div>
+</div>
+  <div class="ui modal" id="addNewPostModel">
+  <i class="close icon"></i>
+  <div class="header">
+    Add new post
+  </div>
+  <div class="content">
+    <form class="ui form" action="" method="post">
+      {% csrf_token %}
+      <div class="six wide field">
+      <label>Partition</label>
+      <div class="ui selection dropdown" id="selectNewPostPartition">
+          <input type="hidden" name="partition" id="newPostPartition">
+          <i class="dropdown icon"></i>
+          <div class="default text">Partition</div>
+          <div class="menu">
+              <div class="item" data-value="Announcement">Announcement</div>
+              <div class="item" data-value="Activity">Activity</div>
+              <div class="item" data-value="Chat">Chat</div>
+              <div class="item" data-value="Transaction">Transaction</div>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Title</label>
+        <input id="newPostTitle" type="text" autocomplete="off">
+      </div>
+      <div class="field">
+        <label>Text</label>
+        <textarea id="newPostContent"></textarea>
+      </div>
+    </form>
+  </div>
+  <div class="actions">
+    <div class="ui button">Cancel</div>
+    <div class="ui button" id="createNewPost">OK</div>
+  </div>
+</div>
+{% endblock %}
+{% block js %}
+  <script type="text/javascript">
+    $(document).ready(function () {
+        $('#addNewPostButton').click(function (e) {
+            e.preventDefault();
+            $('#addNewPostModel').modal('show');
+        })
+         $('#selectNewPostPartition').dropdown();
+    })
+
+
+    // csrf for ajax
+    function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+              var cookie = jQuery.trim(cookies[i]);
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    $(document).ready(function () {
+        $('#createNewPost').on('click', function (e) {
+            e.preventDefault();
+            let data = {
+                'newPostPartition': $('#newPostPartition').val(),
+                'newPostTitle': $('#newPostTitle').val(),
+                'newPostContent': $('#newPostContent').val(),
+            }
+            console.log(data);
+            if (data.newPostPartition === '') {
+                console.log('need parttion');
+            } else {
+                $.ajax({
+                    url: '{% url 'forum:post_create' %}',
+                    method: 'POST',
+                    data: data,
+                    datatType: 'json'
+                })
+                    .done(function (res) {
+                        $('#addNewPostModel').modal('hide');
+                        window.location.replace('{% url 'forum:posts' %}');
+                    })
+            }
+        })
+    })
+
+  </script>
+{% endblock %}
