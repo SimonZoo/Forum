@@ -11,7 +11,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
 def posts(request):
-    posts_list = Post.objects.all()
+    posts_list = Post.objects.all().order_by('-id')
     post_paginator = Paginator(posts_list, 5)
     page = request.GET.get('page')
     try:
