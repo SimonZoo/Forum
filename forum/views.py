@@ -6,11 +6,23 @@ from django.urls import reverse
 from django.http import JsonResponse, HttpResponse, QueryDict
 from django.views import View
 from .models import Post
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 # Create your views here.
 def posts(request):
     posts_list = Post.objects.all()
+    post_paginator = Paginator(posts_list, 5)
+    page = request.GET.get('page')
+    try:
+        posts_list = post_paginator.page(page)
+    except PageNotAnInteger:
+        # 如果用户请求的页码号不是整数，显示第一页
+        posts_list = post_paginator.page(1)
+    except EmptyPage:
+        # 如果用户请求的页码号超过了最大页码号，显示最后一页
+        posts_list = post_paginator.page(post_paginator.num_pages)
+
     post_transaction = Post.objects.filter(partition='Transaction').count()
     post_action = Post.objects.filter(partition='Activity').count()
     post_announcement = Post.objects.filter(partition='Announcement').count()

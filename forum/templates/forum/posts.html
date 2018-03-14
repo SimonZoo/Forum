@@ -51,6 +51,34 @@
    </div>
   </div>
 </div>
+{##}
+{#  {% if is_paginated %}#}
+{#  <div class="pagination-simple">#}
+{#  <!-- 如果当前页还有上一页，显示一个上一页的按钮 -->#}
+{#  {% if page.has_previous %}#}
+{#    <a href="?page={{ page.previous_page_number }}">上一页</a>#}
+{#  {% endif %}#}
+{#  <!-- 显示当前页面信息 -->#}
+{#  <span class="current">第 {{ page.number }} 页 / 共 {{ post_paginator.num_pages }} 页</span>#}
+{#  <!-- 如果当前页还有下一页，显示一个下一页的按钮 -->#}
+{#  {% if page.has_next %}#}
+{#    <a href="?page={{ page.next_page_number }}">下一页</a>#}
+{#  {% endif %}#}
+{#  </div>#}
+{#{% endif %}#}
+
+<p class="ui page grid">
+  {# topics.paginator.page_range 这个函数返回包含一个所有页码数的 range 对象 #}
+  {# 即 range(1, topics.paginator.num_pages + 1) #}
+  {% for page_number in posts.paginator.page_range %}
+    {% ifequal page_number  posts.number %}
+      <button class="ui button primary">{{ page_number }}</button>
+    {% else %}
+      <a href="?page={{ page_number }}" class="ui button">{{ page_number }}</a>
+    {% endifequal %}
+  {% endfor %}
+</p>
+
   <div class="ui modal" id="addNewPostModel">
   <i class="close icon"></i>
   <div class="header">
