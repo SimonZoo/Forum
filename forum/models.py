@@ -19,7 +19,6 @@ class Post(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=50)
     partition = models.CharField(max_length=50, choices=PARTITION,default='Chat')
-    # pub_date = models.DateTimeField('date published',default=datetime.date.today())
     # owner : Current User
     content = models.CharField(max_length=1000)
 

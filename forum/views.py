@@ -7,9 +7,23 @@ from django.http import JsonResponse, HttpResponse, QueryDict
 from django.views import View
 from .models import Post
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 
 
 # Create your views here.
+def login(request):
+    if request.method == 'POST':
+        user_email = request.POST['email']
+        user_password = request.POST['password']
+        user = authenticate(username=user_email, password=user_password)
+        if user is not None:
+            return redirect(reverse('forum:posts'))
+        else:
+            return render(request, 'forum/login.html')
+    return render(request, 'forum/login.html')
+
+
 def posts(request):
     posts_list = Post.objects.all().order_by('-id')
     post_paginator = Paginator(posts_list, 5)
