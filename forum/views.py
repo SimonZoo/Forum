@@ -9,7 +9,9 @@ from .models import Post
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
-
+from django.contrib.auth import login as django_login
+from django.contrib.auth import logout as django_logout
+from datetime import datetime
 
 # Create your views here.
 def login(request):
@@ -18,16 +20,28 @@ def login(request):
         user_password = request.POST['password']
         user = authenticate(username=user_email, password=user_password)
         if user is not None:
+            django_login(request, user)
+            request.session['username'] = user
+            # request.session.set_expiry(6000)
             return redirect(reverse('forum:posts'))
         else:
             return render(request, 'forum/login.html')
     return render(request, 'forum/login.html')
 
 
+def logout(request):
+    django_logout(request)
+    return redirect(reverse('forum:login'))
+
+
 def posts(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse('forum:login'))
+    # print(request.session['user_id'])
     posts_list = Post.objects.all().order_by('-id')
     post_paginator = Paginator(posts_list, 5)
     page = request.GET.get('page')
+
     try:
         posts_list = post_paginator.page(page)
     except PageNotAnInteger:
@@ -41,11 +55,13 @@ def posts(request):
     post_action = Post.objects.filter(partition='Activity').count()
     post_announcement = Post.objects.filter(partition='Announcement').count()
     post_chat = Post.objects.filter(partition='Chat').count()
+    # user_name = User.objects.get(id=request.session.user_id).username
     return render(request, 'forum/posts.html', {'posts': posts_list,
                                                 'post_transaction': post_transaction,
                                                 'post_action': post_action,
                                                 'post_announcement': post_announcement,
-                                                'post_chat': post_chat})
+                                                'post_chat': post_chat
+                                                })
 
 
 class PostCreate(View):
@@ -55,8 +71,8 @@ class PostCreate(View):
             partition=request.POST.get('newPostPartition'),
             title=request.POST.get('newPostTitle'),
             content=request.POST.get('newPostContent'),
+            time=datetime.now(),
         )
-
         return JsonResponse({
             'postID': post.id
         })

@@ -13,7 +13,7 @@
           <div class="content" onclick="javascript:location.href='{% url 'forum:post_detail' post.id %}'" style="cursor: pointer;">
             <a class="header">{{ post.title }}</a>
             <div class="meta">
-              <span>Description</span>
+              <span>{{ post.time|date:"Y-m-d H:i:s" }}</span>
             </div>
             <div class="extra">{{ post.partition }} </div>
           </div>
@@ -112,7 +112,7 @@
     </form>
   </div>
   <div class="actions">
-    <div class="ui button">Cancel</div>
+    <div class="ui button" id="cancelNewPost">Cancel</div>
     <div class="ui button" id="createNewPost">OK</div>
   </div>
 </div>
@@ -127,8 +127,7 @@
     </div>
   </div>
   <div class="actions">
-    <div class="ui button">Cancel</div>
-    <div class="ui button">OK</div>
+    <div class="ui button" id="addPostBlankOK">OK</div>
   </div>
 </div>
 {% endblock %}
@@ -170,6 +169,19 @@
             }
         }
     });
+
+    $(document).ready(function () {
+        $('#cancelNewPost').on('click', function (e) {
+            e.preventDefault();
+            $('#addNewPostModel').modal('hide');
+        })
+
+        $('#addPostBlankOK').on('click', function (e) {
+            e.preventDefault();
+            $('#addPostBlank').modal('hide');
+        })
+    })
+
 
     $(document).ready(function () {
         $('#createNewPost').on('click', function (e) {
