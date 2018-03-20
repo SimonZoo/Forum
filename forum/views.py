@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import JsonResponse, HttpResponse, QueryDict
 from django.views import View
-from .models import Post
+from .models import Post, Comment
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
@@ -37,7 +37,6 @@ def logout(request):
 def posts(request):
     if not request.user.is_authenticated:
         return redirect(reverse('forum:login'))
-    # print(request.session['user_id'])
     posts_list = Post.objects.all().order_by('-id')
     post_paginator = Paginator(posts_list, 5)
     page = request.GET.get('page')
@@ -71,6 +70,7 @@ class PostCreate(View):
             partition=request.POST.get('newPostPartition'),
             title=request.POST.get('newPostTitle'),
             content=request.POST.get('newPostContent'),
+            Owner=request.session['username'],
             time=datetime.now(),
         )
         return JsonResponse({
@@ -80,4 +80,22 @@ class PostCreate(View):
 
 def post_detail(request, pid):
     post = Post.objects.get(id=pid)
-    return render(request, 'forum/post_detail.html', {'post': post})
+    comments = post.comment_set.all()
+    request.session['pid'] = pid
+    return render(request, 'forum/post_detail.html', {'post': post,
+                                                      'comments': comments})
+
+
+class CommentCreate(View):
+
+    def post(self, request):
+        belong_post = Post.objects.get(id=request.session['pid'])
+        comment = Comment.objects.create(
+            post = belong_post,
+            content=request.POST.get('newComment'),
+            time=datetime.now(),
+        )
+        print(comment.content)
+        return JsonResponse({
+            'comment_id': comment.id
+        })

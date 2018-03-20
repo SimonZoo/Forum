@@ -13,7 +13,7 @@
           <div class="content" onclick="javascript:location.href='{% url 'forum:post_detail' post.id %}'" style="cursor: pointer;">
             <a class="header">{{ post.title }}</a>
             <div class="meta">
-              <span>{{ post.time|date:"Y-m-d H:i:s" }}</span>
+              <span>{{ post.Owner }}|{{ post.time|date:"Y-m-d H:i:s" }}</span>
             </div>
             <div class="extra">{{ post.partition }} </div>
           </div>
