@@ -5,16 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="{% static 'forum/css/semantic.min.css' %}">
+{#    <link rel="stylesheet" href="{% static 'forum/css/semantic.min.css' %}">#}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.3.1/dist/semantic.min.css">
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
         crossorigin="anonymous"></script>
-    <script src="{% static 'forum/js/semantic.min.js' %}"></script>
+{#    <script src="{% static 'forum/js/semantic.min.js' %}"></script>#}
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.3.1/dist/semantic.min.js"></script>
     <title>Forum</title>
 </head>
 <body>
     <nav class="ui container ">
         <div class="ui huge menu secondary">
-            <a class="active item">Home </a>
+            <a class="active item" href="{% url 'forum:posts' %}">Home </a>
             <a class="item">Messages </a>
             <a class="item">好友 </a>
             <div class="right menu">

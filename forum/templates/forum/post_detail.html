@@ -10,7 +10,7 @@
 {#            <img src="/images/avatar/small/stevie.jpg">#}
           </a>
           <div class="content">
-            <a class="author">{{ post.Owner }}</a>
+            <a class="author">{{ post.owner }}</a>
             <div class="metadata">
               <div class="date">{{ post.time }}</div>
               <div class="rating"><i class="star icon"></i> 5 Faves </div>
@@ -28,7 +28,7 @@
 {#            <img src="/images/avatar/small/matt.jpg">#}
           </a>
           <div class="content">
-            <a class="author">Matt</a>
+            <a class="author">{{ comment.owner }}</a>
             <div class="metadata">
               <span class="date">{{ comment.time }}</span>
             </div>
@@ -106,16 +106,16 @@
         $('#addNewCommentButton').on('click', function (e) {
             e.preventDefault();
             let data = {
-                'newComment': $('#newComment').val(),
-            }
+                'newComment': $('#newComment').val()
+            };
             console.log(data);
             if (data.newComment === '') {
-
+                console.log('error');
             } else {
                 $.ajax({
                     url: '{% url 'forum:comment_create' %}',
                     method: 'POST',
-                    date: data,
+                    data: data,
                     dataType: 'json'
                 })
                     .done(function (res) {

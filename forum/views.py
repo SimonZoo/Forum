@@ -12,8 +12,11 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as django_login
 from django.contrib.auth import logout as django_logout
 from datetime import datetime
+from django.utils import timezone
 
 # Create your views here.
+
+
 def login(request):
     if request.method == 'POST':
         user_email = request.POST['email']
@@ -22,7 +25,7 @@ def login(request):
         if user is not None:
             django_login(request, user)
             request.session['username'] = user
-            # request.session.set_expiry(6000)
+            request.session.set_expiry(6000000)
             return redirect(reverse('forum:posts'))
         else:
             return render(request, 'forum/login.html')
@@ -66,12 +69,13 @@ def posts(request):
 class PostCreate(View):
 
     def post(self, request):
+        post_owner = request.session['username']
         post = Post.objects.create(
             partition=request.POST.get('newPostPartition'),
             title=request.POST.get('newPostTitle'),
             content=request.POST.get('newPostContent'),
-            Owner=request.session['username'],
-            time=datetime.now(),
+            owner=post_owner,
+            time=timezone.now(),
         )
         return JsonResponse({
             'postID': post.id
@@ -90,12 +94,13 @@ class CommentCreate(View):
 
     def post(self, request):
         belong_post = Post.objects.get(id=request.session['pid'])
+        comment_owner = request.session['username']
         comment = Comment.objects.create(
-            post = belong_post,
+            post=belong_post,
             content=request.POST.get('newComment'),
-            time=datetime.now(),
+            time=timezone.now(),
+            owner=comment_owner
         )
-        print(comment.content)
         return JsonResponse({
             'comment_id': comment.id
         })

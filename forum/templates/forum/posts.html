@@ -13,7 +13,7 @@
           <div class="content" onclick="javascript:location.href='{% url 'forum:post_detail' post.id %}'" style="cursor: pointer;">
             <a class="header">{{ post.title }}</a>
             <div class="meta">
-              <span>{{ post.Owner }}|{{ post.time|date:"Y-m-d H:i:s" }}</span>
+              <span>{{ post.owner }}|{{ post.time|date:"Y-m-d H:i:s" }}</span>
             </div>
             <div class="extra">{{ post.partition }} </div>
           </div>
@@ -24,18 +24,21 @@
       </div>
     </div>
 
-    <div class="four wide column">
+    <div class="four wide column" id="select">
       <div class="ui middle right vertical menu">
-        <a class="active item">
-          <div class="ui teal label">{{ post_chat }}</div>Chat
+        <a class="active item" id="selectAll">
+          <div class="ui teal label">{{ posts.end_index }}</div>All
         </a>
-        <a class="item">
+        <a class="item" id="selectChat">
+          <div class="ui label">{{ post_chat }}</div>Chat
+        </a>
+        <a class="item" id="selectAnnouncement">
           <div class="ui label">{{ post_announcement }}</div>Announcement
         </a>
-        <a class="item">
+        <a class="item" id="selectTransaction">
           <div class="ui label">{{ post_transaction }}</div>Transaction
         </a>
-        <a class="item">
+        <a class="item" id="selectActivity">
           <div class="ui label">{{ post_action }}</div>Activity
         </a>
         <a class="item" href="#" id="addNewPostButton">
@@ -184,12 +187,18 @@
 
 
     $(document).ready(function () {
+        // select all/chat...
+
+
+
+
+
         $('#createNewPost').on('click', function (e) {
             e.preventDefault();
             let data = {
                 'newPostPartition': $('#newPostPartition').val(),
                 'newPostTitle': $('#newPostTitle').val(),
-                'newPostContent': $('#newPostContent').val(),
+                'newPostContent': $('#newPostContent').val()
             }
             console.log(data);
             if (data.newPostPartition === '' || data.newPostTitle === '' || data.newPostContent === '') {
@@ -199,7 +208,7 @@
                     url: '{% url 'forum:post_create' %}',
                     method: 'POST',
                     data: data,
-                    datatType: 'json'
+                    dataType: 'json'
                 })
                     .done(function (res) {
                         $('#addNewPostModel').modal('hide');
