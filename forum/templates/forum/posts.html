@@ -29,7 +29,7 @@
         <a class="active item" id="selectAll">
           <div class="ui teal label">{{ posts.end_index }}</div>All
         </a>
-        <a class="item" id="selectChat">
+        <a class="item" id="selectChat" href="#chat" value="Chat">
           <div class="ui label">{{ post_chat }}</div>Chat
         </a>
         <a class="item" id="selectAnnouncement">
@@ -177,19 +177,27 @@
         $('#cancelNewPost').on('click', function (e) {
             e.preventDefault();
             $('#addNewPostModel').modal('hide');
-        })
+        });
 
         $('#addPostBlankOK').on('click', function (e) {
             e.preventDefault();
             $('#addPostBlank').modal('hide');
         })
-    })
+    });
 
 
     $(document).ready(function () {
         // select all/chat...
-
-
+        {#let select_array = $('#select a')#}
+        $('#selectChat').on('click', function (e) {
+            e.preventDefault();
+            let data = {
+                'select_item': $('#selectChat').attr('value')
+            };
+            console.log(data);
+            
+            })
+        });
 
 
 
@@ -199,7 +207,7 @@
                 'newPostPartition': $('#newPostPartition').val(),
                 'newPostTitle': $('#newPostTitle').val(),
                 'newPostContent': $('#newPostContent').val()
-            }
+            };
             console.log(data);
             if (data.newPostPartition === '' || data.newPostTitle === '' || data.newPostContent === '') {
                 $('#addPostBlank').modal('show');
