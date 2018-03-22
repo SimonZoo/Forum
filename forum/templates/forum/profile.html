@@ -1,0 +1,56 @@
+{% extends "forum/base.html" %}
+{% load static %}
+{% block main %}
+<div>
+  <div class="ui container" style="margin-top: 2rem;">
+  <img class="ui centered  image circular small bordered" src="{% static 'forum/media/avatar/default.png' %}">
+  <h4 class="ui center aligned header">Email</h4>
+
+  <div class="ui container">
+    <div class="ui row grid two column" style="padding: 0 10rem;">
+      <div class="ui eight column wide ">
+        <form class="ui form">
+          <div class="field">
+            <label>Nick Name</label>
+            <input type="text" name="first-name" placeholder="Nick Name">
+          </div>
+          <div class="field">
+            <label>Last Name</label>
+            <input type="text" name="last-name" placeholder="Last Name">
+          </div>
+          <div class="field">
+            <div class="ui checkbox">
+              <input type="checkbox" tabindex="0" class="hidden">
+              <label>可以通过[搜索]找到我</label>
+            </div>
+          </div>
+          <button class="ui button" type="submit">Submit</button>
+        </form>
+      </div>
+      <div class="ui eight column wide">
+        <form class="ui form">
+          <div class="field">
+            <label>Nick Name</label>
+            <input type="text" name="first-name" placeholder="Nick Name">
+          </div>
+          <div class="field">
+            <label>Last Name</label>
+            <input type="text" name="last-name" placeholder="Last Name">
+          </div>
+          <div class="field">
+            <div class="ui checkbox">
+              <input type="checkbox" tabindex="0" class="hidden">
+              <label>可以通过[搜索]找到我</label>
+            </div>
+          </div>
+          <button class="ui button" type="submit">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+{% endblock %}
+
