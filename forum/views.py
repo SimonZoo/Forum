@@ -25,7 +25,8 @@ def login(request):
         if user is not None:
             django_login(request, user)
             request.session['username'] = user
-            request.session.set_expiry(6000000)
+            request.session['uid'] = User.objects.get(username=user).id
+            # request.session.set_expiry(6000)
             return redirect(reverse('forum:posts'))
         else:
             return render(request, 'forum/login.html')
@@ -104,3 +105,9 @@ class CommentCreate(View):
         return JsonResponse({
             'comment_id': comment.id
         })
+
+
+def profile(request, uid):
+    user = User.objects.get(id=uid)
+    avatar = user.get_avatar_url()
+    return render(request, 'forum/profile.html', { 'avatar': avatar })

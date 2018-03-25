@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^post_create/$', views.PostCreate.as_view(), name='post_create'),
     url(r'^comment_create/$', views.CommentCreate.as_view(), name='comment_create'),
     url(r'^post/(?P<pid>\d+)/$', views.post_detail, name='post_detail'),
+    url(r'^profile/$', views.profile, name='profile'),
 ]

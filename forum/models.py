@@ -3,9 +3,14 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User
-import datetime
+from django.contrib.auth.models import User, AbstractUser
+from types import MethodType
+import os
 # Create your models here.
+
+
+AVATAR_ROOT = 'forum/media/avatar'
+AVATAR_DEFAULT = os.path.join(AVATAR_ROOT, 'default.png')
 
 
 class Post(models.Model):
@@ -35,3 +40,20 @@ class Comment(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+
+class Profile(models.Model):
+    user = models.ForeignKey(User)
+    nickname = models.CharField(max_length=20, blank=True, null=True)
+    avatar = models.ImageField(upload_to=AVATAR_ROOT)
+
+
+def get_avatar_url(self):
+    try:
+        avatar = Profile.objects.get(user=self.id)
+        return avatar.avatar
+    except Exception as e:
+        return AVATAR_DEFAULT
+
+
+User.get_avatar_url = MethodType(get_avatar_url, None, User)

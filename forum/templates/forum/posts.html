@@ -195,36 +195,36 @@
                 'select_item': $('#selectChat').attr('value')
             };
             console.log(data);
-            
+
             })
         });
 
 
 
-        $('#createNewPost').on('click', function (e) {
-            e.preventDefault();
-            let data = {
-                'newPostPartition': $('#newPostPartition').val(),
-                'newPostTitle': $('#newPostTitle').val(),
-                'newPostContent': $('#newPostContent').val()
-            };
-            console.log(data);
-            if (data.newPostPartition === '' || data.newPostTitle === '' || data.newPostContent === '') {
-                $('#addPostBlank').modal('show');
-            } else {
-                $.ajax({
-                    url: '{% url 'forum:post_create' %}',
-                    method: 'POST',
-                    data: data,
-                    dataType: 'json'
+    $('#createNewPost').on('click', function (e) {
+        e.preventDefault();
+        let data = {
+            'newPostPartition': $('#newPostPartition').val(),
+            'newPostTitle': $('#newPostTitle').val(),
+            'newPostContent': $('#newPostContent').val()
+        };
+        console.log(data);
+        if (data.newPostPartition === '' || data.newPostTitle === '' || data.newPostContent === '') {
+            $('#addPostBlank').modal('show');
+        } else {
+            $.ajax({
+                url: '{% url 'forum:post_create' %}',
+                method: 'POST',
+                data: data,
+                dataType: 'json'
+            })
+                .done(function (res) {
+                    $('#addNewPostModel').modal('hide');
+                    window.location.replace('{% url 'forum:posts' %}');
                 })
-                    .done(function (res) {
-                        $('#addNewPostModel').modal('hide');
-                        window.location.replace('{% url 'forum:posts' %}');
-                    })
-            }
-        })
+        }
     })
+
 
   </script>
 {% endblock %}
