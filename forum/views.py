@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import JsonResponse, HttpResponse, QueryDict
 from django.views import View
-from .models import Post, Comment
+from .models import Post, Comment, Profile
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
@@ -36,6 +36,19 @@ def login(request):
 def logout(request):
     django_logout(request)
     return redirect(reverse('forum:login'))
+
+
+def sigh_up(request):
+    if request.method == 'POST':
+        new_user = User.objects.create(
+            username=request.POST.get('newAccountEmail'),
+            password=request.POST.get('newAccountPassword')
+        )
+        new_profile = Profile.objects.create(
+            user=new_user,
+            avatar=new_user.get_avatar_url()
+        )
+        return render(request, 'forum/login.html')
 
 
 def posts(request):
@@ -110,4 +123,7 @@ class CommentCreate(View):
 def profile(request, uid):
     user = User.objects.get(id=uid)
     avatar = user.get_avatar_url()
-    return render(request, 'forum/profile.html', { 'avatar': avatar })
+    profile = user.profile_set.all()
+    # nickname = profile[0].nickname
+    return render(request, 'forum/profile.html', { 'avatar': avatar,
+                                                   'nickname': 'nickname'})

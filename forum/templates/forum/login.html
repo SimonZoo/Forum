@@ -95,15 +95,121 @@
       </div>
 
       <div class="ui error message"></div>
-
     </form>
 
     <div class="ui message">
-      New to us? <a href="https://semantic-ui.com/examples/login.html#">Sign Up</a>
+      New to us? <a href="#" id="newAccountLink">Sign Up</a>
     </div>
+
+    <div class="ui modal column" id="newAccount">
+      <i class="close icon"></i>
+      <div class="header">
+        Sign up
+      </div>
+      <div class="content">
+        <form class="ui form" action="" method="post">
+          {% csrf_token %}
+          <div class="ui column">
+            <label>Email</label>
+            <div class="field">
+              <div class="ui left icon input">
+                <i class="user icon"></i>
+                <input type="text" name="email" id="new_user_email" placeholder="E-mail address" autocomplete="off" style="background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%; cursor: auto;">
+              </div>
+            </div>
+            <label>Password</label>
+            <div class="field">
+              <div class="ui left icon input">
+                <i class="lock icon"></i>
+                <input type="password" name="password" id="new_user_password" placeholder="Password" autocomplete="off" style="background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%; cursor: auto;">
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="actions">
+        <div class="ui button" id="cancelNewAccount">Cancel</div>
+        <div class="ui button" id="createNewAccount">OK</div>
+      </div>
+    </div>
+
   </div>
 </div>
 <script>
+
+   $(document).ready(function () {
+        $('#addNewPostButton').click(function (e) {
+            e.preventDefault();
+            $('#addNewPostModel').modal('show');
+        });
+         $('#selectNewPostPartition').dropdown();
+    });
+
+    // csrf for ajax
+    function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+              var cookie = jQuery.trim(cookies[i]);
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+
+  $(document).ready(function () {
+    $('#newAccountLink').on('click', function (e) {
+        e.preventDefault();
+        $('#newAccount').modal('show');
+    });
+
+    $('#cancelNewAccount').on('click', function (e) {
+        e.preventDefault();
+        $('#newAccount').modal('hide');
+    });
+
+    $('#createNewAccount').on('click', function (e) {
+        e.preventDefault();
+        let newAccountEmail = $('#new_user_email').val();
+        let newAccountPassword = $('#new_user_password').val();
+        let data = {
+            'newAccountEmail': newAccountEmail,
+            'newAccountPassword': newAccountPassword
+        };
+        if (data.newAccountEmail === '' || data.newAccountPassword === '' ) {
+            console.log('error');
+        } else {
+            $.ajax({
+                url: '{% url 'forum:signup' %}',
+                method: 'POST',
+                data: data,
+                dataType: 'json'
+            })
+                .done(function (res) {
+                    $('#newAccount').modal('hide');
+                    {#window.location.replace('{% url 'forum:login' %}');#}
+                })
+        }
+    })
+});
 
 </script>
 
