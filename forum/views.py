@@ -40,7 +40,7 @@ def logout(request):
 
 def sigh_up(request):
     if request.method == 'POST':
-        new_user = User.objects.create(
+        new_user = User.objects.create_user(
             username=request.POST.get('newAccountEmail'),
             password=request.POST.get('newAccountPassword')
         )
@@ -48,7 +48,7 @@ def sigh_up(request):
             user=new_user,
             avatar=new_user.get_avatar_url()
         )
-        return render(request, 'forum/login.html')
+        return JsonResponse({"create_user": "yes"})
 
 
 def posts(request):
