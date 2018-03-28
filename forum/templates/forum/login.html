@@ -19,51 +19,48 @@
     body > .grid {
       height: 100%;
     }
-    .image {
-      margin-top: -100px;
-    }
     .column {
       max-width: 450px;
     }
   </style>
-{#  <script>#}
-{#  $(document)#}
-{#    .ready(function() {#}
-{#      $('.ui.form')#}
-{#        .form({#}
-{#          fields: {#}
-{#            email: {#}
-{#              identifier  : 'email',#}
-{#              rules: [#}
-{#                {#}
-{#                  type   : 'empty',#}
-{#                  prompt : 'Please enter your e-mail'#}
-{#                },#}
-{#                {#}
-{#                  type   : 'email',#}
-{#                  prompt : 'Please enter a valid e-mail'#}
-{#                }#}
-{#              ]#}
-{#            },#}
-{#            password: {#}
-{#              identifier  : 'password',#}
-{#              rules: [#}
-{#                {#}
-{#                  type   : 'empty',#}
-{#                  prompt : 'Please enter your password'#}
-{#                },#}
-{#                {#}
-{#                  type   : 'length[6]',#}
-{#                  prompt : 'Your password must be at least 6 characters'#}
-{#                }#}
-{#              ]#}
-{#            }#}
-{#          }#}
-{#        })#}
-{#      ;#}
-{#    })#}
-{#  ;#}
-{#  </script>#}
+  <script>
+  $(document)
+    .ready(function() {
+      $('.ui.form')
+        .form({
+          fields: {
+            email: {
+              identifier  : 'email',
+              rules: [
+                {
+                  type   : 'empty',
+                  prompt : 'Please enter your e-mail'
+                },
+                {
+                  type   : 'email',
+                  prompt : 'Please enter a valid e-mail'
+                }
+              ]
+            },
+            password: {
+              identifier  : 'password',
+              rules: [
+                {
+                  type   : 'empty',
+                  prompt : 'Please enter your password'
+                },
+                {
+                  type   : 'length[6]',
+                  prompt : 'Your password must be at least 6 characters'
+                }
+              ]
+            }
+          }
+        })
+      ;
+    })
+  ;
+  </script>
 </head>
 <body style="">
 
@@ -114,7 +111,7 @@
             <div class="field">
               <div class="ui left icon input">
                 <i class="user icon"></i>
-                <input type="text" name="email" id="new_user_email" placeholder="E-mail address" autocomplete="off" style="background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%; cursor: auto;">
+                <input type="email" name="email" id="new_user_email" placeholder="E-mail address" autocomplete="off" style="background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%; cursor: auto;">
               </div>
             </div>
             <label>Password</label>
@@ -132,7 +129,30 @@
         <div class="ui button" id="createNewAccount">OK</div>
       </div>
     </div>
+  </div>
+</div>
 
+<div class="ui modal" id="invailEmail">
+  <i class="close icon"></i>
+  <div class="header">
+    Tip
+  </div>
+  <div class="image content">
+    <div class="description">
+      Invail Email Address
+    </div>
+  </div>
+</div>
+
+<div class="ui modal" id="invailPassword">
+  <i class="close icon"></i>
+  <div class="header">
+    Tip
+  </div>
+  <div class="image content">
+    <div class="description">
+      Password'slength should more than 6.
+    </div>
   </div>
 </div>
 <script>
@@ -186,20 +206,24 @@
         $('#newAccount').modal('hide');
     });
 
+
     $('#createNewAccount').on('click', function (e) {
-        console.log('1')
         e.preventDefault();
         let newAccountEmail = $('#new_user_email').val();
         let newAccountPassword = $('#new_user_password').val();
-        console.log('2')
         let data = {
             'newAccountEmail': newAccountEmail,
             'newAccountPassword': newAccountPassword
         };
+
+        var reg = /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/;
         if (data.newAccountEmail === '' || data.newAccountPassword === '' ) {
             console.log('error');
+        } else if (reg.test(data.newAccountEmail) === false) {
+            $('#invailEmail').modal('show');
+        } else if (data.newAccountPassword.length < 6) {
+            $('#invailPassword').modal('show');
         } else {
-            console.log('3')
             $.ajax({
                 url: '{% url 'forum:signup' %}',
                 type: 'POST',
@@ -207,7 +231,6 @@
                 success: function (res) {
                     if (res.create_user === 'yes') {
                         $('#newAccount').modal('hide');
-                        console.log('.')
                     }
                 }
             })
