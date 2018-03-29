@@ -3,54 +3,49 @@
 {% block main %}
 <div>
   <div class="ui container" style="margin-top: 2rem;">
-  <img class="ui centered  image circular small bordered" src="{% static avatar %}">
-  <h4 class="ui center aligned header">Email</h4>
-  <h4 class="ui center aligned header">{{ nickname }}</h4>
+    <img class="ui centered  image circular small bordered" src="{% static avatar %}">
+    <h4 class="ui center aligned header">{{ email }}</h4>
+    <h4 class="ui center aligned header">{{ nickname }}</h4>
+    <h4 class="ui horizontal divider header"><i class="tag icon"></i> My Comments </h4>
+    <div class="ui eight column wide ">
+      {% if my_comment %}
+        {% for comment in my_comment %}
+        <div class="ui cards">
+          <div class="card">
+            <div class="content">
+              <div class="header">{{ comment.content }}</div>
+              <div class="meta">{{ comment.time }}</div>
+              <div class="description">{{ comment.post }} </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <p class="ui center aligned header"> No Comments Here</p>
+      {% endif %}
+    </div>
 
-  <div class="ui container">
-    <div class="ui row grid two column" style="padding: 0 10rem;">
-      <div class="ui eight column wide ">
-        <form class="ui form">
-          <div class="field">
-            <label>Nick Name</label>
-            <input type="text" name="first-name" placeholder="Nick Name">
-          </div>
-          <div class="field">
-            <label>Last Name</label>
-            <input type="text" name="last-name" placeholder="Last Name">
-          </div>
-          <div class="field">
-            <div class="ui checkbox">
-              <input type="checkbox" tabindex="0" class="hidden">
-              <label>可以通过[搜索]找到我</label>
+    <h4 class="ui horizontal divider header"><i class="tag icon"></i> My Posts </h4>
+    <div class="ui eight column wide">
+      {% if my_post %}
+        {% for post in my_post %}
+        <div class="ui cards">
+          <div class="card">
+            <div class="content">
+              <div class="header">{{ post.title }}</div>
+              <div class="meta">{{ post.time }}</div>
+              <div class="description">{{ post.content }}</div>
             </div>
           </div>
-          <button class="ui button" type="submit">Submit</button>
-        </form>
-      </div>
-      <div class="ui eight column wide">
-        <form class="ui form">
-          <div class="field">
-            <label>Nick Name</label>
-            <input type="text" name="first-name" placeholder="Nick Name">
-          </div>
-          <div class="field">
-            <label>Last Name</label>
-            <input type="text" name="last-name" placeholder="Last Name">
-          </div>
-          <div class="field">
-            <div class="ui checkbox">
-              <input type="checkbox" tabindex="0" class="hidden">
-              <label>可以通过[搜索]找到我</label>
-            </div>
-          </div>
-          <button class="ui button" type="submit">Submit</button>
-        </form>
-      </div>
+        </div>
+      {% endfor %}
+      {% else %}
+        <p class="ui center aligned header"> No Posts Here</p>
+      {% endif %}
     </div>
   </div>
 </div>
-</div>
+
 {% endblock %}
 
 {% block js %}

@@ -44,7 +44,7 @@ class Comment(models.Model):
 
 class Profile(models.Model):
     user = models.ForeignKey(User)
-    nickname = models.CharField(max_length=20, blank=True, null=True, default='edit your nickname')
+    nickname = models.CharField(max_length=20, blank=True, null=True, default='your nickname')
     avatar = models.ImageField(upload_to=AVATAR_ROOT)
 
 

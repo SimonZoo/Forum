@@ -24,11 +24,16 @@ def login(request):
         user = authenticate(username=user_email, password=user_password)
         if user is not None:
             django_login(request, user)
-            request.session['username'] = user
+            p = list(user.profile_set.all())
+            nickname = ''
+            print(p[0].nickname)
+            nickname = p[0].nickname
+            request.session['username'] = nickname
             request.session['uid'] = User.objects.get(username=user).id
             # request.session.set_expiry(6000)
             return redirect(reverse('forum:posts'))
         else:
+            print('error')
             return render(request, 'forum/login.html')
     return render(request, 'forum/login.html')
 
@@ -46,8 +51,10 @@ def sigh_up(request):
         )
         new_profile = Profile.objects.create(
             user=new_user,
+            nickname=request.POST.get('newAccountName'),
             avatar=new_user.get_avatar_url()
         )
+        print(request.POST.get('newAccountName'))
         return JsonResponse({"create_user": "yes"})
 
 
@@ -55,7 +62,7 @@ def posts(request):
     if not request.user.is_authenticated:
         return redirect(reverse('forum:login'))
     posts_list = Post.objects.all().order_by('-id')
-    post_paginator = Paginator(posts_list, 5)
+    post_paginator = Paginator(posts_list, 10)
     page = request.GET.get('page')
 
     try:
@@ -66,7 +73,10 @@ def posts(request):
     except EmptyPage:
         # 如果用户请求的页码号超过了最大页码号，显示最后一页
         posts_list = post_paginator.page(post_paginator.num_pages)
-
+    if posts_list.__len__() > 10:
+        page_flag = 1
+    else:
+        page_flag = 0
     post_transaction = Post.objects.filter(partition='Transaction').count()
     post_action = Post.objects.filter(partition='Activity').count()
     post_announcement = Post.objects.filter(partition='Announcement').count()
@@ -76,7 +86,8 @@ def posts(request):
                                                 'post_transaction': post_transaction,
                                                 'post_action': post_action,
                                                 'post_announcement': post_announcement,
-                                                'post_chat': post_chat
+                                                'post_chat': post_chat,
+                                                'page_flag': page_flag
                                                 })
 
 
@@ -124,6 +135,12 @@ def profile(request, uid):
     user = User.objects.get(id=uid)
     avatar = user.get_avatar_url()
     profile = user.profile_set.all()
-    # nickname = profile[0].nickname
+    nickname = profile[0].nickname
+    email = user.username
+    my_post= Post.objects.filter(owner=nickname)
+    my_comment = Comment.objects.filter(owner=nickname)
     return render(request, 'forum/profile.html', { 'avatar': avatar,
-                                                   'nickname': 'nickname'})
+                                                   'nickname': nickname,
+                                                   'email': email,
+                                                   'my_post': my_post,
+                                                   'my_comment': my_comment})

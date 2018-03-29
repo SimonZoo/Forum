@@ -110,8 +110,15 @@
             <label>Email</label>
             <div class="field">
               <div class="ui left icon input">
-                <i class="user icon"></i>
+                <i class="mail icon"></i>
                 <input type="email" name="email" id="new_user_email" placeholder="E-mail address" autocomplete="off" style="background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%; cursor: auto;">
+              </div>
+            </div>
+            <label>Nickname</label>
+            <div class="field">
+              <div class="ui left icon input">
+                <i class="user icon"></i>
+                <input type="name" name="password" id="new_user_name" placeholder="Nickname" autocomplete="off" style="background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%; cursor: auto;">
               </div>
             </div>
             <label>Password</label>
@@ -211,11 +218,13 @@
         e.preventDefault();
         let newAccountEmail = $('#new_user_email').val();
         let newAccountPassword = $('#new_user_password').val();
+        let newAccountName = $('#new_user_name').val();
         let data = {
             'newAccountEmail': newAccountEmail,
-            'newAccountPassword': newAccountPassword
+            'newAccountPassword': newAccountPassword,
+            'newAccountName': newAccountName
         };
-
+        console.log(data)
         var reg = /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/;
         if (data.newAccountEmail === '' || data.newAccountPassword === '' ) {
             console.log('error');

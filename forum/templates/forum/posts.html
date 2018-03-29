@@ -70,7 +70,8 @@
 {#  </div>#}
 {#{% endif %}#}
 
-<p class="ui page grid">
+{% if page_flag %}
+  <p class="ui page grid">
   {# topics.paginator.page_range 这个函数返回包含一个所有页码数的 range 对象 #}
   {# 即 range(1, topics.paginator.num_pages + 1) #}
   {% for page_number in posts.paginator.page_range %}
@@ -81,6 +82,7 @@
     {% endifequal %}
   {% endfor %}
 </p>
+{% endif %}
 
   <div class="ui modal" id="addNewPostModel">
   <i class="close icon"></i>
