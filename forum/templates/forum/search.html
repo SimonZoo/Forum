@@ -6,8 +6,9 @@
 
     <div class="twelve wide column">
       <div class="ui divided vertically divided grid">
-      {% if posts %}
-      {% for post in posts %}
+      {% if results %}
+        <h3 class="ui">Results:</h3>
+      {% for post in results %}
       <div class="ui items row" style="margin: 0 1.5rem;">
         <div class="item">
           <div class="content" onclick="javascript:location.href='{% url 'forum:post_detail' post.id %}'" style="cursor: pointer;">
@@ -20,6 +21,8 @@
         </div>
       </div>
       {% endfor %}
+      {% else %}
+        <h3> No Posts </h3>
       {% endif %}
       </div>
     </div>

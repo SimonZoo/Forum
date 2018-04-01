@@ -178,6 +178,8 @@ class CommentCreate(View):
 
 
 def profile(request, uid):
+    if not request.user.is_authenticated:
+        return redirect(reverse('forum:login'))
     user = User.objects.get(id=uid)
     avatar = user.get_avatar_url()
     profile = user.profile_set.all()
@@ -190,3 +192,14 @@ def profile(request, uid):
                                                    'email': email,
                                                    'my_post': my_post,
                                                    'my_comment': my_comment})
+
+
+def search(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse('forum:login'))
+    content = request.GET.get('search')
+    posts_list = Post.objects.filter(title__icontains=content)
+    post_number = get_post_number()
+    # posts_list.exclude(Post.objects.filter(content__icontains=content))
+    return render(request, 'forum/search.html', {'results': posts_list,
+                                                 'post_number': post_number})
