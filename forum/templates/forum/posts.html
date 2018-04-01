@@ -26,20 +26,20 @@
 
     <div class="four wide column" id="select">
       <div class="ui middle right vertical menu">
-        <a class="active item" id="selectAll">
-          <div class="ui teal label">{{ posts.end_index }}</div>All
+        <a class=" item selectItem" id="selectAll" href="{% url 'forum:posts' %}">
+          <div class="ui  label">{{ post_number.all }}</div>All
         </a>
-        <a class="item" id="selectChat" href="#chat" value="Chat">
-          <div class="ui label">{{ post_chat }}</div>Chat
+        <a class="item selectItem" id="selectChat" value="Chat" href="{% url 'forum:post_chat' %}">
+          <div class="ui label">{{ post_number.chat }}</div>Chat
         </a>
-        <a class="item" id="selectAnnouncement">
-          <div class="ui label">{{ post_announcement }}</div>Announcement
+        <a class="item selectItem" id="selectAnnouncement" href="{% url 'forum:post_announcement' %}">
+          <div class="ui label">{{ post_number.announcement }}</div>Announcement
         </a>
-        <a class="item" id="selectTransaction">
-          <div class="ui label">{{ post_transaction }}</div>Transaction
+        <a class="item selectItem" id="selectTransaction" href="{% url 'forum:post_transaction' %}">
+          <div class="ui label">{{ post_number.transaction }}</div>Transaction
         </a>
-        <a class="item" id="selectActivity">
-          <div class="ui label">{{ post_action }}</div>Activity
+        <a class="item selectItem" id="selectActivity" href="{% url 'forum:post_activity' %}">
+          <div class="ui label">{{ post_number.action }}</div>Activity
         </a>
         <a class="item" href="#" id="addNewPostButton">
           <div class="ui label">+</div>Add new
@@ -54,23 +54,7 @@
    </div>
   </div>
 </div>
-{##}
-{#  {% if is_paginated %}#}
-{#  <div class="pagination-simple">#}
-{#  <!-- 如果当前页还有上一页，显示一个上一页的按钮 -->#}
-{#  {% if page.has_previous %}#}
-{#    <a href="?page={{ page.previous_page_number }}">上一页</a>#}
-{#  {% endif %}#}
-{#  <!-- 显示当前页面信息 -->#}
-{#  <span class="current">第 {{ page.number }} 页 / 共 {{ post_paginator.num_pages }} 页</span>#}
-{#  <!-- 如果当前页还有下一页，显示一个下一页的按钮 -->#}
-{#  {% if page.has_next %}#}
-{#    <a href="?page={{ page.next_page_number }}">下一页</a>#}
-{#  {% endif %}#}
-{#  </div>#}
-{#{% endif %}#}
 
-{% if page_flag %}
   <p class="ui page grid">
   {# topics.paginator.page_range 这个函数返回包含一个所有页码数的 range 对象 #}
   {# 即 range(1, topics.paginator.num_pages + 1) #}
@@ -82,7 +66,6 @@
     {% endifequal %}
   {% endfor %}
 </p>
-{% endif %}
 
   <div class="ui modal" id="addNewPostModel">
   <i class="close icon"></i>
@@ -189,21 +172,6 @@
     });
 
 
-    $(document).ready(function () {
-        // select all/chat...
-        {#let select_array = $('#select a')#}
-        $('#selectChat').on('click', function (e) {
-            e.preventDefault();
-            let data = {
-                'select_item': $('#selectChat').attr('value')
-            };
-            console.log(data);
-
-            })
-        });
-
-
-
     $('#createNewPost').on('click', function (e) {
         e.preventDefault();
         let data = {
@@ -211,7 +179,6 @@
             'newPostTitle': $('#newPostTitle').val(),
             'newPostContent': $('#newPostContent').val()
         };
-        console.log(data);
         if (data.newPostPartition === '' || data.newPostTitle === '' || data.newPostContent === '') {
             $('#addPostBlank').modal('show');
         } else {
@@ -226,7 +193,26 @@
                     window.location.replace('{% url 'forum:posts' %}');
                 })
         }
-    })
+    });
+
+     $(document).ready(function () {
+        $("#select a").removeClass("active");
+        $("#select a div").removeClass("teal");
+        $('#select a').each(function () {
+            var href = $(this).attr('href').split('/');
+            var url = window.location.href.split('/');
+            var cur_url = (url.slice(-2))[0];
+            if (href[2] == cur_url) {
+                console.log($(this))
+                $(this).addClass('active');
+                $(this).children('div').addClass('teal');
+            } else if (cur_url == 'posts') {
+                $('#selectAll').addClass('active');
+                $('#selectAll').children('div').addClass('teal');
+            }
+        })
+
+     })
 
 
   </script>

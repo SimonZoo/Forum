@@ -13,8 +13,25 @@ from django.contrib.auth import login as django_login
 from django.contrib.auth import logout as django_logout
 from datetime import datetime
 from django.utils import timezone
+import json
 
 # Create your views here.
+
+
+def get_post_number():
+    posts = Post.objects.all().count()
+    post_transaction = Post.objects.filter(partition='Transaction').count()
+    post_action = Post.objects.filter(partition='Activity').count()
+    post_announcement = Post.objects.filter(partition='Announcement').count()
+    post_chat = Post.objects.filter(partition='Chat').count()
+    arr = {
+        'all': posts,
+        'chat': post_chat,
+        'transaction': post_transaction,
+        'action': post_action,
+        'announcement': post_announcement
+    }
+    return arr
 
 
 def login(request):
@@ -62,9 +79,11 @@ def posts(request):
     if not request.user.is_authenticated:
         return redirect(reverse('forum:login'))
     posts_list = Post.objects.all().order_by('-id')
-    post_paginator = Paginator(posts_list, 10)
-    page = request.GET.get('page')
 
+    post_number = posts_list.__len__()
+
+    post_paginator = Paginator(posts_list, 8)
+    page = request.GET.get('page')
     try:
         posts_list = post_paginator.page(page)
     except PageNotAnInteger:
@@ -73,22 +92,49 @@ def posts(request):
     except EmptyPage:
         # 如果用户请求的页码号超过了最大页码号，显示最后一页
         posts_list = post_paginator.page(post_paginator.num_pages)
-    if posts_list.__len__() > 10:
-        page_flag = 1
-    else:
-        page_flag = 0
-    post_transaction = Post.objects.filter(partition='Transaction').count()
-    post_action = Post.objects.filter(partition='Activity').count()
-    post_announcement = Post.objects.filter(partition='Announcement').count()
-    post_chat = Post.objects.filter(partition='Chat').count()
+
+    array = get_post_number()
+    print(array)
     # user_name = User.objects.get(id=request.session.user_id).username
     return render(request, 'forum/posts.html', {'posts': posts_list,
-                                                'post_transaction': post_transaction,
-                                                'post_action': post_action,
-                                                'post_announcement': post_announcement,
-                                                'post_chat': post_chat,
-                                                'page_flag': page_flag
+                                                'post_number': array
                                                 })
+
+
+def post_chat(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse('forum:login'))
+    posts_list = Post.objects.filter(partition='Chat')
+    array = get_post_number()
+    return render(request, 'forum/posts.html', {'posts': posts_list,
+                                                'post_number': array})
+
+
+def post_transaction(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse('forum:login'))
+    posts_list = Post.objects.filter(partition='Transaction')
+    array = get_post_number()
+    return render(request, 'forum/posts.html', {'posts': posts_list,
+                                                'post_number': array})
+
+
+def post_announcement(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse('forum:login'))
+    posts_list = Post.objects.filter(partition='Announcement')
+    array = get_post_number()
+    return render(request, 'forum/posts.html', {'posts': posts_list,
+                                                'post_number': array})
+
+
+def post_activity(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse('forum:login'))
+    posts_list = Post.objects.filter(partition='Activity')
+    array = get_post_number()
+    return render(request, 'forum/posts.html', {'posts': posts_list,
+                                                'post_number': array})
 
 
 class PostCreate(View):

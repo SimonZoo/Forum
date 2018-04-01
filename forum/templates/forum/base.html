@@ -15,10 +15,8 @@
 </head>
 <body>
     <nav class="ui container ">
-        <div class="ui huge menu secondary">
-            <a class="active item" href="{% url 'forum:posts' %}">Home </a>
-            <a class="item">Messages </a>
-            <a class="item">好友 </a>
+        <div class="ui huge menu secondary pointing ">
+            <a class=" item active" href="{% url 'forum:posts' %}">Home </a>
             <div class="right menu">
               <a class="ui item" href="{% url 'forum:profile' request.session.uid %}">{{ request.session.username }}</a>
               <a class="ui item" href="{% url 'forum:logout' %}">登出 </a>
