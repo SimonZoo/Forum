@@ -43,7 +43,8 @@ def login(request):
             django_login(request, user)
             nickname = user.profile.nickname
             request.session['username'] = nickname
-            request.session['uid'] = User.objects.get(username=user).id
+            request.session['uid'] = user.id
+            print(user.id)
             # request.session.set_expiry(6000)
             return redirect(reverse('forum:posts'))
         else:
@@ -183,13 +184,13 @@ def profile(request, uid):
     avatar = user.get_avatar_url()
     nickname = user.profile.nickname
     email = user.username
-    my_post= Post.objects.filter(owner=nickname)
-    my_comment = Comment.objects.filter(owner=nickname)
-    return render(request, 'forum/profile.html', { 'avatar': avatar,
-                                                   'nickname': nickname,
-                                                   'email': email,
-                                                   'my_post': my_post,
-                                                   'my_comment': my_comment})
+    my_post= Post.objects.filter(owner=user)
+    my_comment = Comment.objects.filter(owner=user)
+    return render(request, 'forum/profile.html', {'avatar': avatar,
+                                                  'nickname': nickname,
+                                                  'email': email,
+                                                  'my_post': my_post,
+                                                  'my_comment': my_comment})
 
 
 def search(request):
