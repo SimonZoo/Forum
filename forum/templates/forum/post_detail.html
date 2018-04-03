@@ -1,4 +1,5 @@
 {% extends "forum/base.html" %}
+{% load static %}
 {% block main %}
 <div class="ui container" style="margin-top: 2rem;">
   <div class="ui two column grid row">
@@ -7,10 +8,10 @@
       <div class="ui comments">
         <div class="comment">
           <a class="avatar">
-{#            <img src="/images/avatar/small/stevie.jpg">#}
+            <img src="{% static post.owner.get_avatar_url %}">
           </a>
           <div class="content">
-            <a class="author">{{ post.owner }}</a>
+            <a class="author">{{ post.owner.profile.nickname }}</a>
             <div class="metadata">
               <div class="date">{{ post.time }}</div>
 {#              <div class="rating"><i class="star icon"></i> 5 Faves </div>#}
@@ -25,10 +26,10 @@
         {% for comment in comments %}
         <div class="comment">
           <a class="avatar">
-{#            <img src="/images/avatar/small/matt.jpg">#}
+            <img src="{% static comment.owner.get_avatar_url %}">
           </a>
           <div class="content">
-            <a class="author">{{ comment.owner }}</a>
+            <a class="author">{{ comment.owner.profile.nickname }}</a>
             <div class="metadata">
               <span class="date">{{ comment.time }}</span>
             </div>

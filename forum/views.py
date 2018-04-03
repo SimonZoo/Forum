@@ -41,10 +41,7 @@ def login(request):
         user = authenticate(username=user_email, password=user_password)
         if user is not None:
             django_login(request, user)
-            p = list(user.profile_set.all())
-            nickname = ''
-            print(p[0].nickname)
-            nickname = p[0].nickname
+            nickname = user.profile.nickname
             request.session['username'] = nickname
             request.session['uid'] = User.objects.get(username=user).id
             # request.session.set_expiry(6000)
@@ -141,11 +138,12 @@ class PostCreate(View):
 
     def post(self, request):
         post_owner = request.session['username']
+        user = User.objects.get(id=request.session['uid'])
         post = Post.objects.create(
             partition=request.POST.get('newPostPartition'),
             title=request.POST.get('newPostTitle'),
             content=request.POST.get('newPostContent'),
-            owner=post_owner,
+            owner=user,
             time=timezone.now(),
         )
         return JsonResponse({
@@ -166,11 +164,12 @@ class CommentCreate(View):
     def post(self, request):
         belong_post = Post.objects.get(id=request.session['pid'])
         comment_owner = request.session['username']
+        user = User.objects.get(id=request.session['uid'])
         comment = Comment.objects.create(
             post=belong_post,
             content=request.POST.get('newComment'),
             time=timezone.now(),
-            owner=comment_owner
+            owner=user
         )
         return JsonResponse({
             'comment_id': comment.id
@@ -182,8 +181,7 @@ def profile(request, uid):
         return redirect(reverse('forum:login'))
     user = User.objects.get(id=uid)
     avatar = user.get_avatar_url()
-    profile = user.profile_set.all()
-    nickname = profile[0].nickname
+    nickname = user.profile.nickname
     email = user.username
     my_post= Post.objects.filter(owner=nickname)
     my_comment = Comment.objects.filter(owner=nickname)

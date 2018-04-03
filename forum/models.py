@@ -23,7 +23,8 @@ class Post(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=50)
     partition = models.CharField(max_length=50, choices=PARTITION, default='Chat')
-    owner = models.CharField(max_length=100, default='User')
+    owner = models.ForeignKey(User)
+    # owner = models.CharField(max_length=100, default='User')
     content = models.CharField(max_length=1000, blank=True)
     time = models.DateTimeField(default=timezone.now)
 
@@ -36,14 +37,15 @@ class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     content = models.CharField(max_length=1000, default='New Comment')
     time = models.DateTimeField(default=timezone.now)
-    owner = models.CharField(max_length=100, default='User')
+    owner = models.ForeignKey(User)
+    # owner = models.CharField(max_length=100, default='User')
 
     def __str__(self):
         return str(self.id)
 
 
 class Profile(models.Model):
-    user = models.ForeignKey(User)
+    user = models.OneToOneField(User)
     nickname = models.CharField(max_length=20, blank=True, null=True, default='your nickname')
     avatar = models.ImageField(upload_to=AVATAR_ROOT)
 
