@@ -17,4 +17,5 @@ urlpatterns = [
     url(r'^post/(?P<pid>\d+)/$', views.post_detail, name='post_detail'),
     url(r'^profile/(?P<uid>\d+)/$', views.profile, name='profile'),
     url(r'^search/$', views.search, name='search'),
+    url(r'^upload/$', views.user_avatar_upload, name='user_avatar_upload'),
 ]

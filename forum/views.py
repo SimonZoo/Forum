@@ -13,6 +13,10 @@ from django.contrib.auth import login as django_login
 from django.contrib.auth import logout as django_logout
 from datetime import datetime
 from django.utils import timezone
+from django.conf import settings
+from PIL import Image
+import os
+import uuid
 import json
 
 # Create your views here.
@@ -202,3 +206,51 @@ def search(request):
     # posts_list.exclude(Post.objects.filter(content__icontains=content))
     return render(request, 'forum/search.html', {'results': posts_list,
                                                  'post_number': post_number})
+
+
+def user_avatar_upload(request):
+    if request.method == 'POST':
+        data = {}
+        if request.FILES.has_key('avatar_file'):
+            # 本地上传
+            avatar_file = request.FILES['avatar_file']
+            temp_folder = os.path.join(settings.BASE_DIR, 'forum/static/forum/media', 'avatar')
+            print(settings.BASE_DIR, 'base')
+            if not os.path.isdir(temp_folder):
+                os.makedirs(temp_folder)
+
+            temp_filename = uuid.uuid1().hex + os.path.splitext(avatar_file.name)[-1]
+            temp_path = os.path.join(temp_folder, temp_filename)
+
+            # 保存上传的文件
+            with open(temp_path, 'wb') as f:
+                for chunk in avatar_file.chunks():
+                    f.write(chunk)
+            try:
+                top = int(float(request.POST['avatar_y']))
+                buttom = top + int(float(request.POST['avatar_height']))
+                left = int(float(request.POST['avatar_x']))
+                right = left + int(float(request.POST['avatar_width']))
+            except:
+                top = 10
+                buttom = 10
+                left = 10
+                right = 10
+            im = Image.open(temp_path)
+            # 裁剪图片
+            crop_im = im.convert("RGBA").crop((left, top, right, buttom)).resize((64, 64), Image.ANTIALIAS)
+
+            # 设置背景颜色为白色
+            out = Image.new('RGB', crop_im.size, (255, 255, 255))
+            out.paste(crop_im, (0, 0, 64, 64), crop_im)
+
+            # 保存图片
+            out.save(temp_path)
+
+            # 保存记录
+            avatar = request.user.set_avatar_url(temp_path)
+            # os.remove(temp_path)
+
+            data['success'] = True
+            data['avatar_url'] = avatar.avatar.url
+            return HttpResponse(json.dumps(data), content_type="application/json")

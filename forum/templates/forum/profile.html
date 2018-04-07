@@ -1,9 +1,22 @@
 {% extends "forum/base.html" %}
 {% load static %}
 {% block main %}
+<style>
+  .avatar-wrapper {
+  height: 370px;
+  width: 100%;
+  margin-top: 15px;
+  box-shadow: inset 0 0 5px rgba(0,0,0,.25);
+  background-color: #fcfcfc;
+  overflow: hidden;
+}
+
+  .avatar-wrapper img { display: block; height: auto; max-width: 100%;}
+</style>
+
 <div>
   <div class="ui container" style="margin-top: 2rem;">
-    <img class="ui centered  image circular small bordered" src="{% static avatar %}">
+    <img class="ui centered  image circular bordered" id="avatar" src="{% static avatar %}" style="width: 10rem;">
     <h4 class="ui center aligned header">{{ email }}</h4>
     <h4 class="ui center aligned header">{{ nickname }}</h4>
     <h4 class="ui horizontal divider header"><i class="tag icon"></i> My Comments </h4>
@@ -46,8 +59,141 @@
   </div>
 </div>
 
+<div class="ui modal" id="edit_avatar">
+  <i class="close icon"></i>
+  <div class="header">
+    Edit Avatar
+  </div>
+  <div class="image content">
+    {# 预览部分 #}
+    <div class="ui medium image avatar-preview">
+      <img src="{% static avatar %}" style="margin-left: 1rem; border-radius: 4rem; height: 6rem; width: 6rem;">
+      <br>
+      <a id="avatar-upload" href="#" class="ui button green">上传头像</a>
+      <br>
+      <label class="ui button" for="avatar-input">本地图片</label>
+    </div>
+
+    {# 编辑部分 #}
+    <div class="description">
+      <div class="avatar-wrapper" id='avatar-wrapper' style="max-width: 100%;">
+        <img src="">
+      </div>
+    </div>
+
+{#    <div class="actions">#}
+{#    <div class="ui black deny button">#}
+{#      Cancel#}
+{#    </div>#}
+{#    <div class="ui positive right labeled icon button">#}
+{#      OK#}
+{#      <i class="checkmark icon"></i>#}
+{#    </div>#}
+{#  </div>#}
+    {# 编辑相关数据 #}
+    <form id="avatar_form">
+      {%csrf_token%}
+      <div>
+        <input type="hidden" id="avatar_x" name="avatar_x" value="50">
+        <input type="hidden" id="avatar_y" name="avatar_y" value="50">
+        <input type="hidden" id="avatar_width" name="avatar_width" value="60">
+        <input type="hidden" id="avatar_height" name="avatar_height" value="60">
+      </div>
+      <br>
+
+      <input style="display:none" type="file" class="avatar-input" id="avatar-input" name="avatar_file" accept=".jpg,.jpeg,.png">
+    </form>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block js %}
+<script>
+  $('#avatar').click(function (e) {
+      e.preventDefault();
+      $('#edit_avatar').modal('show');
+  });
+
+  $(document).ready(function () {
+      $(function(){
+      //初始化裁剪器
+          var image = $('#avatar-wrapper img');
+          console.log('init');
+          image.cropper({
+              checkImageOrigin: true, //检查图片来源
+              dragMode: 'move',   //图片可移动
+              restore:false,      //窗体调整大小之后不自动恢复裁剪区域
+              zoomOnWheel: false, //不允许通过鼠标滚轮缩放
+              zoomOnTouch: false, //不允许通过触摸缩放
+              aspectRatio: 1 / 1, //裁剪比例
+              autoCropArea: 0.5,  //裁剪背景透明度
+              autoCropArea: 1,    //自动裁剪的比例
+
+              //文本的jQuery选择表达式，一个div
+              preview: $(".avatar-preview").selector,
+              crop: function (e) {
+                  console.log(e.detail.x, e.detail.y, e.detail.width, e.detail.height);
+                  //返回图片编辑相关数据
+                  $('#avatar_x').val(e.detail.x);
+                  $('#avatar_y').val(e.detail.y);
+                  $('#avatar_width').val(e.detail.width);
+                  $('#avatar_height').val(e.detail.height);
+              },
+          });
+      });
+      $("#avatar-input").change(function(){
+          var image = $('#avatar-wrapper img');
+          var URL = window.URL || window.webkitURL;
+          if(URL){
+              var files = this.files;
+              if (files && files.length){
+                  var file = files[0];
+                  if (/^image\/\w+$/.test(file.type)) {
+                    var blobURL = URL.createObjectURL(file);
+                    image.cropper('reset').cropper('replace', blobURL);
+                    console.log(blobURL)
+                    // $('.avatar_crop .disabled').removeClass('disabled');
+                    // normal_tip('本地图片：可调整到最佳状态再上传');
+                  } else {
+                    // error_tip('请选择一张图片');
+                  }
+              }
+          }
+      });
+      $("#avatar-upload").click(function(){
+          if($('#avatar-wrapper img').attr('src')==''){
+              alert('亲~ 你是不是忘记选择图片了');
+              return false;
+          }
+
+      //注意：FormData中的[0]是必备的
+          var formData = new FormData($("#avatar_form")[0]);
+          console.log($("#avatar_form"));
+          console.log(formData);
+          $.ajax({
+              url: "{% url 'forum:user_avatar_upload' %}",
+              type: 'POST',
+              data: formData,
+              async: false,
+              cache: false,
+              contentType: false,
+              processData: false,
+              success: function (data){
+                  //更新导航右上角的头像
+                  //$('.navbar-avatar').attr('src', '/' + data['avatar_url']);
+                  alert("上传头像成功");
+              },
+              error: function (err) {
+                  alert("提交失败，请重试！" + err);
+              }
+          });
+          return false;
+      });
+  });
+
+
+
+</script>
 {% endblock %}
 
