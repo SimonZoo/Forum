@@ -60,7 +60,7 @@ def logout(request):
     return redirect(reverse('forum:login'))
 
 
-def sigh_up(request):
+def sign_up(request):
     if request.method == 'POST':
         new_user = User.objects.create_user(
             username=request.POST.get('newAccountEmail'),
