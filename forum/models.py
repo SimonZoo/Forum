@@ -45,7 +45,7 @@ class Comment(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User)
     nickname = models.CharField(max_length=20, blank=True, null=True, default='your nickname')
-    avatar = models.ImageField(upload_to=AVATAR_ROOT)
+    avatar = models.ImageField(upload_to=AVATAR_ROOT, default=AVATAR_DEFAULT)
 
     def set_avatar_url(self, src_path):
         print(self.avatar.url)
@@ -81,11 +81,3 @@ class Profile(models.Model):
         # if os.path.isfile(old_path):
         #     os.remove(old_path)
         return self
-
-
-def get_avatar_url(self):
-    try:
-        user_profile = Profile.objects.get(user=self.id)
-        return user_profile.avatar
-    except Exception as e:
-        return AVATAR_DEFAULT

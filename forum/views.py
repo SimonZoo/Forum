@@ -66,10 +66,9 @@ def sigh_up(request):
             username=request.POST.get('newAccountEmail'),
             password=request.POST.get('newAccountPassword')
         )
-        new_profile = Profile.objects.create(
+        Profile.objects.create(
             user=new_user,
             nickname=request.POST.get('newAccountName'),
-            avatar=new_user.get_avatar_url()
         )
         print(request.POST.get('newAccountName'))
         return JsonResponse({"create_user": "yes"})
@@ -183,7 +182,7 @@ def profile(request, uid):
     if not request.user.is_authenticated:
         return redirect(reverse('forum:login'))
     user = User.objects.get(id=uid)
-    avatar = user.get_avatar_url()
+    avatar = user.profile.avatar
     nickname = user.profile.nickname
     email = user.username
     my_post = Post.objects.filter(owner=user)
