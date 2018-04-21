@@ -7,7 +7,7 @@ from . import views
 urlpatterns = [
     url(r'^$', views.login, name='login'),
     url(r'^login/$', views.login, name='login'),
-    url(r'^logout/$', views.login, name='logout'),
+    url(r'^logout/$', views.logout, name='logout'),
     url(r'^signup/$', views.sign_up, name='signup'),
     url(r'^posts/$', views.posts, name='posts'),
     url(r'^posts/chat/$', views.post_chat, name='post_chat'),
