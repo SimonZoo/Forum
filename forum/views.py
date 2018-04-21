@@ -1,23 +1,21 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+import json
+import os
+import uuid
 
-from django.shortcuts import render, redirect
-from django.urls import reverse
-from django.http import JsonResponse, HttpResponse, QueryDict
-from django.views import View
-from .models import Post, Comment, Profile
+from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as django_login
 from django.contrib.auth import logout as django_logout
-from datetime import datetime
+from django.http import JsonResponse, HttpResponse, QueryDict
+from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.utils import timezone
-from django.conf import settings
+from django.views import View
 from PIL import Image
-import os
-import uuid
-import json
+
+from .models import Post, Comment, Profile
 
 # Create your views here.
 
@@ -188,7 +186,7 @@ def profile(request, uid):
     avatar = user.get_avatar_url()
     nickname = user.profile.nickname
     email = user.username
-    my_post= Post.objects.filter(owner=user)
+    my_post = Post.objects.filter(owner=user)
     my_comment = Comment.objects.filter(owner=user)
     return render(request, 'forum/profile.html', {'avatar': avatar,
                                                   'nickname': nickname,
@@ -211,7 +209,7 @@ def search(request):
 def user_avatar_upload(request):
     if request.method == 'POST':
         data = {}
-        if request.FILES.has_key('avatar_file'):
+        if 'avatar_file' in request.FILES:
             # 本地上传
             avatar_file = request.FILES['avatar_file']
             temp_folder = os.path.join(settings.BASE_DIR, 'forum/static/forum/media', 'avatar')
@@ -248,7 +246,7 @@ def user_avatar_upload(request):
             out.save(temp_path)
 
             # 保存记录
-            avatar = request.user.set_avatar_url(temp_path)
+            avatar = request.user.profile.set_avatar_url(temp_path)
             # os.remove(temp_path)
 
             data['success'] = True

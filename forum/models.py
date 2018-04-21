@@ -1,12 +1,9 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+import os
 
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User, AbstractUser
 from django.conf import settings
-from types import MethodType
-import os, shutil
 # Create your models here.
 
 
@@ -50,6 +47,41 @@ class Profile(models.Model):
     nickname = models.CharField(max_length=20, blank=True, null=True, default='your nickname')
     avatar = models.ImageField(upload_to=AVATAR_ROOT)
 
+    def set_avatar_url(self, src_path):
+        print(self.avatar.url)
+        old_path = os.path.join(settings.BASE_DIR, self.avatar.url)  # 旧的头像路径
+        old_filename = os.path.splitext(os.path.split(old_path)[-1])[0]
+
+        try:
+            # 获得起始编号
+            start_num = int(old_filename.split('_')[-1]) + 1
+        except Exception as e:
+            # avatar = Profile(user=self)
+            start_num = 0
+            # old_path = ''
+        print(src_path, 'src!')
+        # 根据user id设置新的头像名称
+        filename = os.path.split(src_path)[-1]
+        img_format = os.path.splitext(filename)[-1]
+        print(filename)
+
+        # while True:
+        #     new_filename = '%s_64_%s%s' % (self.id, start_num, img_format)
+        #     new_path = os.path.join(settings.BASE_DIR, AVATAR_ROOT, new_filename)
+        #     if not os.path.isfile(new_path):
+        #         break
+        #     start_num += 1
+
+        # 保存头像
+        # shutil.copy(new_path, src_path)
+        self.avatar = os.path.join(AVATAR_ROOT, filename)
+        self.save()
+
+        # 删除旧文件
+        # if os.path.isfile(old_path):
+        #     os.remove(old_path)
+        return self
+
 
 def get_avatar_url(self):
     try:
@@ -57,47 +89,3 @@ def get_avatar_url(self):
         return user_profile.avatar
     except Exception as e:
         return AVATAR_DEFAULT
-
-
-User.get_avatar_url = MethodType(get_avatar_url, None, User)
-
-
-def set_avatar_url(self, src_path):
-
-    avatar = Profile.objects.get(user=self)
-    print(avatar.avatar.url)
-    old_path = os.path.join(settings.BASE_DIR, avatar.avatar.url)  # 旧的头像路径
-    old_filename = os.path.splitext(os.path.split(old_path)[-1])[0]
-
-    try:
-        # 获得起始编号
-        start_num = int(old_filename.split('_')[-1]) + 1
-    except Exception as e:
-        # avatar = Profile(user=self)
-        start_num = 0
-        # old_path = ''
-    print(src_path, 'src!')
-    # 根据user id设置新的头像名称
-    filename = os.path.split(src_path)[-1]
-    img_format = os.path.splitext(filename)[-1]
-    print(filename)
-
-    # while True:
-    #     new_filename = '%s_64_%s%s' % (self.id, start_num, img_format)
-    #     new_path = os.path.join(settings.BASE_DIR, AVATAR_ROOT, new_filename)
-    #     if not os.path.isfile(new_path):
-    #         break
-    #     start_num += 1
-
-    # 保存头像
-    # shutil.copy(new_path, src_path)
-    avatar.avatar = os.path.join(AVATAR_ROOT, filename)
-    avatar.save()
-
-    # 删除旧文件
-    # if os.path.isfile(old_path):
-    #     os.remove(old_path)
-    return avatar
-
-
-User.set_avatar_url = MethodType(set_avatar_url, None, User)
