@@ -86,10 +86,10 @@ def posts(request):
     try:
         posts_list = post_paginator.page(page)
     except PageNotAnInteger:
-        # 如果用户请求的页码号不是整数，显示第一页
+        # show first page if input page is not int
         posts_list = post_paginator.page(1)
     except EmptyPage:
-        # 如果用户请求的页码号超过了最大页码号，显示最后一页
+        # show last page if input page is too large
         posts_list = post_paginator.page(post_paginator.num_pages)
 
     array = get_post_number()
@@ -209,7 +209,7 @@ def user_avatar_upload(request):
     if request.method == 'POST':
         data = {}
         if 'avatar_file' in request.FILES:
-            # 本地上传
+            # upload
             avatar_file = request.FILES['avatar_file']
             temp_folder = os.path.join(settings.BASE_DIR, 'forum/static/forum/media', 'avatar')
             print(settings.BASE_DIR, 'base')
@@ -219,7 +219,7 @@ def user_avatar_upload(request):
             temp_filename = uuid.uuid1().hex + os.path.splitext(avatar_file.name)[-1]
             temp_path = os.path.join(temp_folder, temp_filename)
 
-            # 保存上传的文件
+            # save file
             with open(temp_path, 'wb') as f:
                 for chunk in avatar_file.chunks():
                     f.write(chunk)
@@ -234,17 +234,17 @@ def user_avatar_upload(request):
                 left = 10
                 right = 10
             im = Image.open(temp_path)
-            # 裁剪图片
+            # adjust file
             crop_im = im.convert("RGBA").crop((left, top, right, buttom)).resize((64, 64), Image.ANTIALIAS)
 
-            # 设置背景颜色为白色
+            # background color is white
             out = Image.new('RGB', crop_im.size, (255, 255, 255))
             out.paste(crop_im, (0, 0, 64, 64), crop_im)
 
-            # 保存图片
+            # save avatar
             out.save(temp_path)
 
-            # 保存记录
+            # save recorder
             avatar = request.user.profile.set_avatar_url(temp_path)
             # os.remove(temp_path)
 
