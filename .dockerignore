@@ -1,0 +1,12 @@
+*/__pycache__
+*/*.py[cod]
+
+db.sqlite3
+README.md
+LICENSE
+.gitignore
+
+venv
+static
+.idea
+.git
