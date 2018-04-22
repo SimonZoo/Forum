@@ -8,7 +8,7 @@
       <div class="ui comments">
         <div class="comment">
           <a class="avatar">
-            <img src="{% static post.owner.get_avatar_url %}">
+            <img src="{% static post.owner.profile.avatar %}">
           </a>
           <div class="content">
             <a class="author">{{ post.owner.profile.nickname }}</a>
@@ -26,7 +26,7 @@
         {% for comment in comments %}
         <div class="comment">
           <a class="avatar">
-            <img src="{% static comment.owner.get_avatar_url %}">
+            <img src="{% static comment.owner.profile.avatar %}">
           </a>
           <div class="content">
             <a class="author">{{ comment.owner.profile.nickname }}</a>
