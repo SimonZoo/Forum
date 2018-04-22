@@ -103,5 +103,8 @@ ENV/
 # mypy
 .mypy_cache/
 
+# static files
+/static
+
 # media files
 /forum/static/forum/media/

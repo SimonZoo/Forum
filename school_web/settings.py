@@ -19,13 +19,18 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
+# SECURITY WARNING: don't run with debug turned on in production!
 # SECURITY WARNING: keep the secret key used in production secret!
+DEBUG = True
 SECRET_KEY = '@$fur79$lrg4a2l1&h)ok19&sr4*int^sie2!m_)e-7k$!l(4^'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
+if os.getenv('DJANGO_SECRET_KEY'):
+    DEBUG = False
+    SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+
+
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -120,5 +125,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
