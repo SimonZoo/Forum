@@ -1,12 +1,15 @@
 */__pycache__
 */*.py[cod]
 
-db.sqlite3
 README.md
 LICENSE
-.gitignore
 
-venv
+db.sqlite3
+
 static
+venv
+
 .idea
+
 .git
+.gitignore
