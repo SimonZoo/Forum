@@ -1,10 +1,32 @@
 {% extends "forum/base.html" %}
 {% block main %}
+<style>
+@media screen and (max-width: 700px) {
+  #sidebar {
+    display: none !important;
+  }
+
+  #normal_nav {
+    display: none !important;
+  }
+}
+
+@media screen and (min-width: 700px){
+  #sidebar {
+    display: block !important;
+  }
+
+  #mobile_nav {
+    display: none !important;
+  }
+}
+
+</style>
 
 <div class="ui container" style="margin-top: 2rem;">
-  <div class="ui two column row grid">
+  <div class="ui two column row grid stackable">
 
-    <div class="twelve wide column">
+    <div class="twelve wide column" id="main">
       <div class="ui divided vertically divided grid">
       {% if posts %}
       {% for post in posts %}
@@ -24,7 +46,7 @@
       </div>
     </div>
 
-    <div class="four wide column" >
+    <div class="four wide column" id="sidebar">
       <div class="ui middle right vertical menu" id="select">
         <a class=" item selectItem" id="selectAll" href="{% url 'forum:posts' %}">
           <div class="ui  label">{{ post_number.all }}</div>All
@@ -43,7 +65,7 @@
         </a>
       </div>
 
-      <div class="ui middle right vertical menu">
+      <div class="ui middle right vertical menu" id="serch_and_add">
         <a class="item" href="#" id="addNewPostButton">
           <div class="ui label teal">+</div>Add new
         </a>
@@ -58,8 +80,8 @@
         </form>
       </div>
       </div>
-  </div>
-   </div>
+
+    </div>
   </div>
 </div>
 
@@ -134,9 +156,9 @@
         $('#addNewPostButton').click(function (e) {
             e.preventDefault();
             $('#addNewPostModel').modal('show');
-        })
+        });
          $('#selectNewPostPartition').dropdown();
-    })
+    });
 
     // csrf for ajax
     function getCookie(name) {

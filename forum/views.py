@@ -81,7 +81,7 @@ def posts(request):
 
     post_number = posts_list.__len__()
 
-    post_paginator = Paginator(posts_list, 8)
+    post_paginator = Paginator(posts_list, 7)
     page = request.GET.get('page')
     try:
         posts_list = post_paginator.page(page)
@@ -165,7 +165,6 @@ class CommentCreate(View):
 
     def post(self, request):
         belong_post = Post.objects.get(id=request.session['pid'])
-        comment_owner = request.session['username']
         user = User.objects.get(id=request.session['uid'])
         comment = Comment.objects.create(
             post=belong_post,

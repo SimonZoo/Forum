@@ -23,12 +23,12 @@
     <div class="ui eight column wide ">
       {% if my_comment %}
         {% for comment in my_comment %}
-        <div class="ui cards">
+        <div class="ui cards" style="display: inline-block;padding: 0 .5rem;">
           <div class="card">
             <div class="content">
               <div class="header">{{ comment.content }}</div>
               <div class="meta">{{ comment.time }}</div>
-              <div class="description">{{ comment.post }} </div>
+              <div class="description">{{ comment.part }} </div>
             </div>
           </div>
         </div>
@@ -42,12 +42,12 @@
     <div class="ui eight column wide">
       {% if my_post %}
         {% for post in my_post %}
-        <div class="ui cards">
+        <div class="ui cards" style="display: inline-block;padding: 0 .5rem;">
           <div class="card">
             <div class="content">
               <div class="header">{{ post.title }}</div>
               <div class="meta">{{ post.time }}</div>
-              <div class="description">{{ post.content }}</div>
+              <div class="description">{{ post.part }}</div>
             </div>
           </div>
         </div>

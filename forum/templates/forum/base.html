@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" href="{% static 'forum/media/favicon.ico' %}">
     <!-- https://github.com/fengyuanchen/cropper (the js library to edit avatar)-->
     <link rel="stylesheet" href="{% static 'forum/css/cropper.min.css' %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.3.1/dist/semantic.min.css">
@@ -18,18 +19,51 @@
 </head>
 <body>
     <nav class="ui container ">
-        <div class="ui huge menu secondary pointing ">
-            <a class=" item active" href="{% url 'forum:posts' %}">Home </a>
+        <div class="ui huge menu secondary pointing" id="normal_nav">
+            <a class="item active" >Home</a>
             <div class="right menu">
-              <a class="ui item" href="{% url 'forum:profile' request.session.uid %}">{{ request.session.username }}</a>
-              <a class="ui item" href="{% url 'forum:logout' %}">登出 </a>
+                <a class="ui item" href="{% url 'forum:profile' request.session.uid %}">{{ request.session.username }}</a>
+                <a class="ui item " href="{% url 'forum:logout' %}">登出 </a>
             </div>
+        </div>
+        <div class="ui huge menu secondary pointing " id="mobile_nav">
+            <div class="ui dropdown" >
+                <div class="ui pointing dropdown link item simple">
+                    <span class="text">Home</span>
+                    <i class="dropdown icon" ></i>
+                    <div class="menu" id="hide_meun">
+                        <div class="item"><a href="{% url 'forum:posts' %}">All</a></div>
+                        <div class="item"><a href="{% url 'forum:post_chat' %}">Chat</a></div>
+                        <div class="item"><a href="{% url 'forum:post_activity' %}">Activity</a></div>
+                        <div class="item"><a href="{% url 'forum:post_announcement' %}">Announcement</a></div>
+                        <div class="item"><a href="{% url 'forum:post_transaction' %}">Transaction</a></div>
+                        <div class="divider"></div>
+                        <div class="item">
+                            <a href="#" id="addNewPostButton" >
+                              Add new
+                            </a>
+                        </div>
+                        <div class="item">
+                            <form method="get" action="{% url 'forum:search' %}">
+                                {% csrf_token %}
+                                <div class="ui action input mini">
+                                    <input type="text" placeholder="Search post..." name="search">
+                                    <button class="ui button icon" type="submit">
+                                        <i class="search icon"></i>
+                                    </button>
+                              </div>
+                            </form>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+                <a class="ui item right" href="{% url 'forum:profile' request.session.uid %}">{{ request.session.username }}</a>
+                <a class="ui item " href="{% url 'forum:logout' %}">登出 </a>
         </div>
     </nav>
      <script>
       $(document).ready(function () {
-          {#console.log('{{ request.session.username }}')#}
-          {#console.log('1')#}
+          //$('#hide_meun').dropdown();
       })
       </script>
     <div id="main" class="ui container">

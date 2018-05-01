@@ -28,6 +28,8 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+    def part(self):
+        return self.content[:self.content.find('\n')]
 
 class Comment(models.Model):
     id = models.AutoField(primary_key=True)
@@ -39,6 +41,9 @@ class Comment(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+    def part(self):
+        return self.content[:self.content.find('\n')]
 
 
 class Profile(models.Model):
