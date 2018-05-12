@@ -66,7 +66,7 @@
       </div>
 
       <div class="ui middle right vertical menu" id="serch_and_add">
-        <a class="item" href="#" id="addNewPostButton">
+        <a class="item" href="#" id="addNewPostButtonPC">
           <div class="ui label teal">+</div>Add new
         </a>
       <div class="item">
@@ -156,8 +156,15 @@
         $('#addNewPostButton').click(function (e) {
             e.preventDefault();
             $('#addNewPostModel').modal('show');
+            $('#selectNewPostPartition').dropdown();
         });
-         $('#selectNewPostPartition').dropdown();
+
+
+        $('#addNewPostButtonPC').click(function (e) {
+            e.preventDefault();
+            $('#addNewPostModel').modal('show');
+            $('#selectNewPostPartition').dropdown();
+        })
     });
 
     // csrf for ajax

@@ -17,6 +17,28 @@
 
     <title>Forum</title>
 </head>
+<style>
+@media screen and (max-width: 700px) {
+  #sidebar {
+    display: none !important;
+  }
+
+  #normal_nav {
+    display: none !important;
+  }
+}
+
+@media screen and (min-width: 700px){
+  #sidebar {
+    display: block !important;
+  }
+
+  #mobile_nav {
+    display: none !important;
+  }
+}
+
+</style>
 <body>
     <nav class="ui container ">
         <div class="ui huge menu secondary pointing" id="normal_nav">
@@ -62,9 +84,7 @@
         </div>
     </nav>
      <script>
-      $(document).ready(function () {
-          //$('#hide_meun').dropdown();
-      })
+
       </script>
     <div id="main" class="ui container">
         {% block main %} {% endblock %}
